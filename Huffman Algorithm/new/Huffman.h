@@ -4,13 +4,11 @@
 class Huffman
 {
 public:
-	Huffman() {}
+	Huffman();
 	~Huffman();
-	void frequencyTableEncode(); // Таблица частот из инета
-	void userFrequencyTableEncode(); // Пользовательская таблица
+	void encode(std::string& file);
 private:
+	StringHandler* handler;
 	std::map<char, uint32_t> _frequencyTable;
-	void fillingFrequencyTable();
-	void fillingUserFrequencyTableEncode();
+	void openStream(std::string& file);
 };
-

@@ -10,12 +10,16 @@ StringHandler::~StringHandler()
 	_frequency.clear();
 }
 
-void StringHandler::addFrequency(const std::string& input)
+void StringHandler::addFrequency(std::ifstream& stream)
 {
-	for (auto letter : input) _frequency[letter] += 1;
+	std::string line_from_file;
+	while (getline(stream, line_from_file))
+	{
+		for (auto letter : line_from_file) _frequency[letter] += 1;
+	}
 }
 
-std::map<char, uint32_t> StringHandler::getFrequency()
+std::map<char, uint32_t> StringHandler::getFrequency() const
 {
 	return _frequency;
 }
