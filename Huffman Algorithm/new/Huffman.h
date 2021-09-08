@@ -1,5 +1,6 @@
 #pragma once
 #include "StringHandler.h"
+#include "Tree.h"
 
 class Huffman
 {

@@ -18,10 +18,19 @@ void Huffman::encode(std::string& file)
 
 	///////  DEBUG  ///////
 	
-	//for (auto i : _frequencyTable) std::cout << i.first << " - " << i.second << std::endl;
+	for (auto i : _frequencyTable) std::cout << i.first << " - " << i.second << std::endl;
 
 	///////////////////////
+
+	Tree tree;
+	for (auto i : _frequencyTable)
+	{
+		tree.addToTree(i.second, i.first);
+	}
+	
 }
+
+
 
 void Huffman::openStream(std::string& file)
 {
