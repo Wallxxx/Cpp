@@ -6,7 +6,7 @@ int main()
 {
 	std::cout << "Enter path: ";
 	std::string temp;
-	std::string out = "none";
+	std::string out = "none.txt";
 	std::cin >> temp;
 	algorithms::Huffman test;
 	test.encode(temp, out);

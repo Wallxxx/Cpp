@@ -6,12 +6,16 @@ namespace algorithms
 	Huffman::Huffman()
 	{
 		root = nullptr;
-		//handler = nullptr;
+		_all_symbols = _various_symbols = 0;
+		_encode_value = _bits = 0;
 	}
 
 	Huffman::~Huffman()
 	{
-		//delete handler;
+		_frequency.clear();
+		_summary_table.clear();
+		_frequency_table.clear();
+		_way.clear();
 	}
 
 	Huffman::unit::unit()
@@ -36,34 +40,18 @@ namespace algorithms
 		_symbol = '\0';
 	}
 
+	Huffman::unit::~unit()
+	{
+		delete _left;
+		delete _right;
+	}
+
 	void Huffman::encode(std::string& in_file, std::string& out_file)
 	{
 		stringHandlerOpenStreamRead(in_file);
 		makeTable();
 		saveKey();
-
-
-		for (auto i : _frequency_table) std::cout << i->_symbol << " - " << i->_symbol_frequency << std::endl;
-		std::cout << "All: " << _all_symbols << std::endl;
-		std::cout << "Sym: " << _various_symbols << std::endl;
-
-		//_frequencyTable = handler->getFrequency();
-
-		///////  DEBUG  ///////
-
-		//for (auto i : _frequencyTable) std::cout << i.first << " - " << i.second << std::endl;
-
-		///////////////////////
-
-		//Tree tree;
-		//for (auto i : _frequencyTable)
-		//{
-		//	tree.addToTree(i.second, i.first);
-		//}
-
-		//tree.showTree();
-
-
+		stringHandlerOpenStreamWrite(in_file, out_file);
 	}
 
 	void Huffman::stringHandlerOpenStreamRead(std::string& in_file)
@@ -84,7 +72,7 @@ namespace algorithms
 
 	void Huffman::stringHandlerFilling(std::string& line_from_file)
 	{
-		for (auto letter : line_from_file)
+		for (const auto letter : line_from_file)
 		{
 			_frequency[letter] += 1;
 			_all_symbols += 1;
@@ -104,10 +92,26 @@ namespace algorithms
 	void Huffman::stringHandlerReader(std::ifstream& in_stream, std::ofstream& out_stream)
 	{
 		std::string line_from_file;
+
 		while (getline(in_stream, line_from_file))
 		{
-			
+			for (const auto letter : line_from_file) stringHandlerReaderEncode(out_stream, letter);
 		}
+	}
+
+	void Huffman::stringHandlerReaderEncode(std::ofstream& out_file, const char letter)
+	{
+		for (const auto code : _summary_table[letter])
+		{
+			_encode_value |= code << (7 - _bits++);
+			if (_bits == 8) stringHandlerReaderEncodeWrite(out_file);
+		}
+	}
+
+	void Huffman::stringHandlerReaderEncodeWrite(std::ofstream& out_file)
+	{
+		out_file << _encode_value;
+		_bits = _encode_value = 0;
 	}
 
 	void Huffman::makeTable()
@@ -146,7 +150,7 @@ namespace algorithms
 		if (start->_right != nullptr) { _way.push_back(true); makeWay(start->_right); }
 		if (start->_left == nullptr && start->_right == nullptr) 
 			_summary_table[start->_symbol] = _way;
-		if (_way.size() == NULL) return;
+		if (_way.size() == 0) return;
 		_way.pop_back();
 	}
 

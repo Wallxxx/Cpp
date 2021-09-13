@@ -21,6 +21,7 @@ namespace algorithms
 			unit();
 			unit(char symbol, uint32_t symbol_frequency);
 			unit(unit* left, unit* right);
+			~unit();
 			uint32_t _symbol_frequency;
 			char _symbol;
 			unit* _left = nullptr, * _right = nullptr;
@@ -39,6 +40,8 @@ namespace algorithms
 		unit* root;
 		uint32_t _all_symbols;
 		uint32_t _various_symbols;
+		uint8_t _encode_value;
+		uint8_t _bits;
 
 		void stringHandlerOpenStreamRead(std::string& in_file);
 		void stringHandlerReader(std::ifstream& in_stream);
@@ -46,6 +49,8 @@ namespace algorithms
 
 		void stringHandlerOpenStreamWrite(std::string& in_file, std::string& out_file);
 		void stringHandlerReader(std::ifstream& in_file, std::ofstream& out_file);
+		void stringHandlerReaderEncode(std::ofstream& out_file, const char letter);
+		void stringHandlerReaderEncodeWrite(std::ofstream& out_file);
 
 		void makeTable();
 		void makeTableTree();
