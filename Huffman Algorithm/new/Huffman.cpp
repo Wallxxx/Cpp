@@ -5,9 +5,9 @@ namespace algorithms
 
 	Huffman::Huffman()
 	{
-		root = nullptr;
+		_root = _iterator = nullptr;
 		_all_symbols = _various_symbols = 0;
-		_encode_value = _bits = 0;
+		_encode_value = _bits = _degree = 0;
 	}
 
 	Huffman::~Huffman()
@@ -52,6 +52,14 @@ namespace algorithms
 		makeTable();
 		saveKey();
 		stringHandlerOpenStreamWrite(in_file, out_file);
+		// TODO: Clear all
+	}
+
+	void Huffman::decode(std::string& in_file, std::string& out_file, std::string& key_file)
+	{
+		stringHandlerOpenStreamRead(in_file, key_file);
+		decodeFile(in_file, out_file);
+		// TODO: Clear all
 	}
 
 	void Huffman::stringHandlerOpenStreamRead(std::string& in_file)
@@ -132,8 +140,8 @@ namespace algorithms
 			unit* head = new unit(makeTableTreeNodes(), makeTableTreeNodes());
 			_frequency_table.push_back(head);
 		}
-		root = _frequency_table.front();
-		makeWay(root);
+		_root = _frequency_table.front();
+		makeWay(_root);
 	}
 
 	Huffman::unit* Huffman::makeTableTreeNodes()
@@ -182,4 +190,109 @@ namespace algorithms
 			key_file << static_cast<char>(127);
 		}
 	}
+
+	void Huffman::stringHandlerOpenStreamRead(std::string& in_file, std::string& key_file)
+	{
+		std::ifstream key(key_file);
+		stringHandlerOpenStreamReadAllSymbols(key);
+		stringHandlerOpenStreamReadVariousSymbols(key);
+		stringHandlerOpenStreamReadCodes(key);
+	}
+
+	void Huffman::stringHandlerOpenStreamReadAllSymbols(std::ifstream& key_stream)
+	{
+		_degree = 0;
+		char temp = key_stream.get();
+		while (temp != static_cast<char>(127))
+		{
+			_all_symbols += (static_cast<uint32_t>(temp) - 48) * static_cast<uint32_t>(pow(10, _degree++));
+			temp = key_stream.get();
+		}
+	}
+
+	void Huffman::stringHandlerOpenStreamReadVariousSymbols(std::ifstream& key_stream)
+	{
+		_degree = 0;
+		char temp = key_stream.get();
+		while (temp != static_cast<char>(127))
+		{
+			_various_symbols += (static_cast<uint32_t>(temp) - 48) * static_cast<uint32_t>(pow(10, _degree++));
+			temp = key_stream.get();
+		}
+	}
+
+	void Huffman::stringHandlerOpenStreamReadCodes(std::ifstream& key_stream)
+	{
+		_iterator = new unit;
+		_root = _iterator;
+		while (key_stream.eof() + 1) makeTree(key_stream); // TODO: не работает eof, исправить
+	}
+
+	void Huffman::makeTree(std::ifstream& key_stream)
+	{
+		char letter = key_stream.get(), code = key_stream.get();
+		while (code != static_cast<char>(127))
+		{
+			if (code == '0') makeTreeLeft();
+			else makeTreeRight();
+			code = key_stream.get();
+			if (code == static_cast<char>(127)) { _iterator->_symbol = letter; _iterator = _root; }
+		}
+	}
+
+	void Huffman::makeTreeLeft()
+	{
+		if (_iterator->_left == nullptr)
+		{
+			unit* left = new unit;
+			_iterator->_left = left;
+		}
+		_iterator = _iterator->_left;
+	}
+
+	void Huffman::makeTreeRight()
+	{
+		if (_iterator->_right == nullptr)
+		{
+			unit* left = new unit;
+			_iterator->_right = left;
+		}
+		_iterator = _iterator->_right;
+	}
+
+	void Huffman::decodeFile(std::string& in_file, std::string& out_file)
+	{
+		std::ifstream encode_file(in_file);
+		std::ofstream original_file(out_file);
+		_iterator = _root;
+		_letter = encode_file.get();
+		while (decodeFileRead(encode_file, original_file)) {}
+	}
+
+	bool Huffman::decodeFileRead(std::ifstream& encode_file, std::ofstream& original_file)
+	{
+		if (_letter & (1 << (7 - _bits++))) _iterator = _iterator->_left;
+		else _iterator = _iterator->_right;
+		if (_iterator->_left == nullptr && _iterator->_right == nullptr)
+		{
+			if (encode_file.eof()) return false;
+			decodeFileWrite(original_file);
+		}
+		else throw "bool Huffman::decodeFileRead(std::ifstream& encode_file, std::ofstream& original_file): broken tree\n";
+		if (_bits == 8) { _letter = encode_file.get(); _bits = 0; }
+		return true;
+	}
+
+	void Huffman::decodeFileWrite(std::ofstream& original_file)
+	{
+		original_file << _iterator->_symbol;
+		_iterator = _root;
+	}
+
+	bool Huffman::fileEof(std::ifstream& file)
+	{
+		return true;
+	}
+
+	
 }
