@@ -42,6 +42,7 @@ namespace algorithms
 		unit* _iterator;
 		uint32_t _all_symbols;
 		uint32_t _various_symbols;
+		uint16_t _key_symbols;
 		uint8_t _encode_value;
 		uint8_t _bits;
 		uint8_t _degree;
@@ -79,6 +80,9 @@ namespace algorithms
 		void decodeFileWrite(std::ofstream& original_file);
 
 		bool fileEof(std::ifstream& file);
+
+		void debugShowKeyTable();
+		void debugShowKeyTableRec(unit* start);
 	};
 
 }
