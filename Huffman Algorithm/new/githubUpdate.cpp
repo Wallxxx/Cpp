@@ -4,7 +4,7 @@
 
 int main()
 {
-	std::cout << "Enter path: ";
+	std::cout << "Enter path': ";
 	std::string ein = "test.txt";
 	std::string eout = "none.txt";
 

@@ -41,6 +41,7 @@ namespace algorithms
 		unit* _root;
 		unit* _iterator;
 		uint32_t _all_symbols;
+		uint32_t _write_symbols;
 		uint32_t _various_symbols;
 		uint16_t _key_symbols;
 		uint8_t _encode_value;
@@ -50,7 +51,7 @@ namespace algorithms
 
 		void stringHandlerOpenStreamRead(std::string& in_file);
 		void stringHandlerReader(std::ifstream& in_stream);
-		void stringHandlerFilling(std::string& line_from_file);
+		void stringHandlerFilling(std::ifstream& in_stream);
 
 		void stringHandlerOpenStreamWrite(std::string& in_file, std::string& out_file);
 		void stringHandlerReader(std::ifstream& in_file, std::ofstream& out_file);

@@ -8,7 +8,7 @@ namespace algorithms
 	Huffman::Huffman()
 	{
 		_root = _iterator = nullptr;
-		_all_symbols = _various_symbols = 0;
+		_all_symbols = _various_symbols = _write_symbols = 0;
 		_key_symbols = 0;
 		_encode_value = _bits = _degree = 0;
 		_letter = '\0';
@@ -62,41 +62,42 @@ namespace algorithms
 	void Huffman::decode(std::string& in_file, std::string& out_file, std::string& key_file)
 	{
 		stringHandlerOpenStreamRead(in_file, key_file);
-		debugShowKeyTable();
+		//debugShowKeyTable();
 		decodeFile(in_file, out_file);
 		// TODO: Clear all
 	}
 
 	void Huffman::stringHandlerOpenStreamRead(std::string& in_file)
 	{
-		std::ifstream stream(in_file);
+		std::ifstream stream(in_file, std::ios::binary);
 		stringHandlerReader(stream);
 		stream.close();
 	}
 
 	void Huffman::stringHandlerReader(std::ifstream& in_stream)
 	{
-		std::string line_from_file;
-		while (getline(in_stream, line_from_file))
+		while (!in_stream.eof())
 		{
-			stringHandlerFilling(line_from_file);
+			stringHandlerFilling(in_stream);
 		}
 	}
 
-	void Huffman::stringHandlerFilling(std::string& line_from_file)
+	void Huffman::stringHandlerFilling(std::ifstream& in_stream)
 	{
-		for (const auto letter : line_from_file)
-		{
+		//for (const auto letter : line_from_file)
+		//{
+		char letter = in_stream.get();
+		std::cout << letter;
 			_frequency[letter] += 1;
 			_all_symbols += 1;
 			if (_frequency[letter] == 1) _various_symbols += 1;
-		}
+		//}
 	}
 
 	void Huffman::stringHandlerOpenStreamWrite(std::string& in_file, std::string& out_file)
 	{
-		std::ofstream out(out_file);
-		std::ifstream in(in_file);
+		std::ofstream out(out_file, std::ios::binary);
+		std::ifstream in(in_file, std::ios::binary);
 		stringHandlerReader(in, out);
 		out.close();
 		in.close();
@@ -104,11 +105,11 @@ namespace algorithms
 
 	void Huffman::stringHandlerReader(std::ifstream& in_stream, std::ofstream& out_stream)
 	{
-		std::string line_from_file;
+		//std::string line_from_file;
 
-		while (getline(in_stream, line_from_file))
+		while (!in_stream.eof())
 		{
-			for (const auto letter : line_from_file) stringHandlerReaderEncode(out_stream, letter);
+			stringHandlerReaderEncode(out_stream, in_stream.get());
 		}
 	}
 
@@ -169,7 +170,7 @@ namespace algorithms
 
 	void Huffman::saveKey()
 	{
-		std::ofstream key_file("key.txt");
+		std::ofstream key_file("key.txt", std::ios::binary);
 		saveKeyAllSymbolsAmount(key_file, _all_symbols);
 		saveKeyAllSymbolsAmount(key_file, _various_symbols);
 		saveKeyAllSymbols(key_file);
@@ -267,11 +268,11 @@ namespace algorithms
 
 	void Huffman::decodeFile(std::string& in_file, std::string& out_file)
 	{
-		std::ifstream encode_file(in_file);
-		std::ofstream original_file(out_file);
+		std::ifstream encode_file(in_file, std::ios::binary);
+		std::ofstream original_file(out_file, std::ios::binary);
 		_iterator = _root;
 		_letter = encode_file.get();
-		std::cout << "letter: " << _letter << " (" << std::bitset<8>(_letter) << ")\n";
+		//std::cout << "letter: " << _letter << " (" << std::bitset<8>(_letter) << ")\n";
 		while (decodeFileRead(encode_file, original_file)) {}
 	}
 
@@ -280,17 +281,17 @@ namespace algorithms
 		if (!(_letter & (1 << (7 - _bits++))))
 		{
 			_iterator = _iterator->_left;
-			std::cout << "way left\n";
+			//std::cout << "way left\n";
 		}
 		else
 		{
 			_iterator = _iterator->_right;
-			std::cout << "way right\n";
+			//std::cout << "way right\n";
 		}
 		if (_iterator->_left == nullptr && _iterator->_right == nullptr)
 		{
-			if (encode_file.eof()) return false; // TODO: обработать символ конца файла
-			std::cout << _iterator->_symbol << std::endl;
+			if (_write_symbols == _all_symbols) return false; // TODO: обработать символ конца файла
+			//std::cout << _iterator->_symbol << std::endl;
 			decodeFileWrite(original_file);
 		}
 		//else throw "bool Huffman::decodeFileRead(std::ifstream& encode_file, std::ofstream& original_file): broken tree\n";
@@ -302,6 +303,7 @@ namespace algorithms
 	{
 		original_file << _iterator->_symbol;
 		_iterator = _root;
+		_write_symbols++;
 	}
 
 	bool Huffman::fileEof(std::ifstream& file)
@@ -319,12 +321,12 @@ namespace algorithms
 	{
 		if (start->_left != nullptr)
 		{
-			std::cout << '0';
+			//std::cout << '0';
 			debugShowKeyTableRec(start->_left);
 		}
 		if (start->_right != nullptr)
 		{
-			std::cout << '1';
+			//std::cout << '1';
 			debugShowKeyTableRec(start->_right);
 		}
 		if (start->_left == nullptr && start->_right == nullptr) std::cout << start->_symbol << std::endl;
