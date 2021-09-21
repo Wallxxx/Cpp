@@ -277,8 +277,6 @@ namespace algorithms
 		else _iterator = _iterator->_right;
 		if ((_iterator->_left == nullptr) && (_iterator->_right == nullptr))
 		{
-			std::cout << "write: " << _write_symbols << std::endl;
-			std::cout << "all: " << _all_symbols << std::endl;
 			if ((_write_symbols + 1) == _all_symbols) return false;
 			decodeFileWrite(original_file);
 		}
