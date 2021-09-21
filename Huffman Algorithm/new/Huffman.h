@@ -81,9 +81,6 @@ namespace algorithms
 		void decodeFileWrite(std::ofstream& original_file);
 
 		bool fileEof(std::ifstream& file);
-
-		void debugShowKeyTable();
-		void debugShowKeyTableRec(unit* start);
 	};
 
 }

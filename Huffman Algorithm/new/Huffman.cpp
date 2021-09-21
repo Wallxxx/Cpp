@@ -62,7 +62,6 @@ namespace algorithms
 	void Huffman::decode(std::string& in_file, std::string& out_file, std::string& key_file)
 	{
 		stringHandlerOpenStreamRead(in_file, key_file);
-		//debugShowKeyTable();
 		decodeFile(in_file, out_file);
 		// TODO: Clear all
 	}
@@ -84,14 +83,11 @@ namespace algorithms
 
 	void Huffman::stringHandlerFilling(std::ifstream& in_stream)
 	{
-		//for (const auto letter : line_from_file)
-		//{
 		char letter = in_stream.get();
 		std::cout << letter;
-			_frequency[letter] += 1;
-			_all_symbols += 1;
-			if (_frequency[letter] == 1) _various_symbols += 1;
-		//}
+		_frequency[letter] += 1;
+		_all_symbols += 1;
+		if (_frequency[letter] == 1) _various_symbols += 1;
 	}
 
 	void Huffman::stringHandlerOpenStreamWrite(std::string& in_file, std::string& out_file)
@@ -162,7 +158,7 @@ namespace algorithms
 	{
 		if (start->_left != nullptr) { _way.push_back(false); makeWay(start->_left); }
 		if (start->_right != nullptr) { _way.push_back(true); makeWay(start->_right); }
-		if (start->_left == nullptr && start->_right == nullptr) 
+		if (start->_left == nullptr && start->_right == nullptr)
 			_summary_table[start->_symbol] = _way;
 		if (_way.size() == 0) return;
 		_way.pop_back();
@@ -231,7 +227,7 @@ namespace algorithms
 	{
 		_iterator = new unit;
 		_root = _iterator;
-		while (_key_symbols-- > 0) makeTree(key_stream); // TODO: не работает eof, исправить
+		while (_key_symbols-- > 0) makeTree(key_stream);
 	}
 
 	void Huffman::makeTree(std::ifstream& key_stream)
@@ -272,30 +268,21 @@ namespace algorithms
 		std::ofstream original_file(out_file, std::ios::binary);
 		_iterator = _root;
 		_letter = encode_file.get();
-		//std::cout << "letter: " << _letter << " (" << std::bitset<8>(_letter) << ")\n";
 		while (decodeFileRead(encode_file, original_file)) {}
 	}
 
 	bool Huffman::decodeFileRead(std::ifstream& encode_file, std::ofstream& original_file)
 	{
-		if (!(_letter & (1 << (7 - _bits++))))
+		if (!(_letter & (1 << (7 - _bits++)))) _iterator = _iterator->_left;
+		else _iterator = _iterator->_right;
+		if ((_iterator->_left == nullptr) && (_iterator->_right == nullptr))
 		{
-			_iterator = _iterator->_left;
-			//std::cout << "way left\n";
-		}
-		else
-		{
-			_iterator = _iterator->_right;
-			//std::cout << "way right\n";
-		}
-		if (_iterator->_left == nullptr && _iterator->_right == nullptr)
-		{
-			if (_write_symbols == _all_symbols) return false; // TODO: обработать символ конца файла
-			//std::cout << _iterator->_symbol << std::endl;
+			std::cout << "write: " << _write_symbols << std::endl;
+			std::cout << "all: " << _all_symbols << std::endl;
+			if ((_write_symbols + 1) == _all_symbols) return false;
 			decodeFileWrite(original_file);
 		}
-		//else throw "bool Huffman::decodeFileRead(std::ifstream& encode_file, std::ofstream& original_file): broken tree\n";
-		if (_bits == 8) { _letter = encode_file.get(); _bits = 0; std::cout << "letter: " << _letter << " (" << std::bitset<8>(_letter) << ")\n"; }
+		if (_bits == 8) { _letter = encode_file.get(); _bits = 0; }
 		return true;
 	}
 
@@ -310,27 +297,4 @@ namespace algorithms
 	{
 		return true;
 	}
-
-	void Huffman::debugShowKeyTable()
-	{
-		unit* temp = _root;
-		debugShowKeyTableRec(temp);
-	}
-
-	void Huffman::debugShowKeyTableRec(unit* start)
-	{
-		if (start->_left != nullptr)
-		{
-			//std::cout << '0';
-			debugShowKeyTableRec(start->_left);
-		}
-		if (start->_right != nullptr)
-		{
-			//std::cout << '1';
-			debugShowKeyTableRec(start->_right);
-		}
-		if (start->_left == nullptr && start->_right == nullptr) std::cout << start->_symbol << std::endl;
-	}
-
-	
 }

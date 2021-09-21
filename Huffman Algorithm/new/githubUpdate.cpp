@@ -19,7 +19,7 @@ int main()
 	//test.encode(ein, eout);
 	test.decode(din, dout, dkey);
 
-	
+
 	//for (auto i : temp) std::cout << i.first << " - " << i.second << std::endl;
 	return 0;
 }
