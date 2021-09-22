@@ -16,7 +16,7 @@ int main()
 	algorithms::Huffman test;
 	//test.encode(temp, out);
 	// 
-	//test.encode(ein, eout);
+	test.encode(ein, eout);
 	test.decode(din, dout, dkey);
 
 

@@ -1,7 +1,5 @@
 #include "Huffman.h"
 
-#include <bitset>
-
 namespace algorithms
 {
 
@@ -56,14 +54,14 @@ namespace algorithms
 		makeTable();
 		saveKey();
 		stringHandlerOpenStreamWrite(in_file, out_file);
-		// TODO: Clear all
+		cleanAll();
 	}
 
 	void Huffman::decode(std::string& in_file, std::string& out_file, std::string& key_file)
 	{
 		stringHandlerOpenStreamRead(in_file, key_file);
 		decodeFile(in_file, out_file);
-		// TODO: Clear all
+		cleanAll();
 	}
 
 	void Huffman::stringHandlerOpenStreamRead(std::string& in_file)
@@ -84,7 +82,6 @@ namespace algorithms
 	void Huffman::stringHandlerFilling(std::ifstream& in_stream)
 	{
 		char letter = in_stream.get();
-		std::cout << letter;
 		_frequency[letter] += 1;
 		_all_symbols += 1;
 		if (_frequency[letter] == 1) _various_symbols += 1;
@@ -101,8 +98,6 @@ namespace algorithms
 
 	void Huffman::stringHandlerReader(std::ifstream& in_stream, std::ofstream& out_stream)
 	{
-		//std::string line_from_file;
-
 		while (!in_stream.eof())
 		{
 			stringHandlerReaderEncode(out_stream, in_stream.get());
@@ -291,8 +286,26 @@ namespace algorithms
 		_write_symbols++;
 	}
 
-	bool Huffman::fileEof(std::ifstream& file)
+	void Huffman::cleanAll()
 	{
-		return true;
+		cleanData();
+		cleanVars();
+	}
+
+	void Huffman::cleanData()
+	{
+		_frequency.clear();
+		_summary_table.clear();
+		_frequency_table.clear();
+		_way.clear();
+	}
+
+	void Huffman::cleanVars()
+	{
+		_root = _iterator = nullptr;
+		_all_symbols = _various_symbols = _write_symbols = 0;
+		_key_symbols = 0;
+		_encode_value = _bits = _degree = 0;
+		_letter = '\0';
 	}
 }

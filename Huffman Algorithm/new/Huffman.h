@@ -8,7 +8,7 @@
 
 namespace algorithms
 {
-
+	// TODO: Добавить документацию по данному алгоритму
 	class Huffman
 	{
 	public:
@@ -80,7 +80,9 @@ namespace algorithms
 		bool decodeFileRead(std::ifstream& encode_file, std::ofstream& original_file);
 		void decodeFileWrite(std::ofstream& original_file);
 
-		bool fileEof(std::ifstream& file);
+		void cleanAll();
+		void cleanData();
+		void cleanVars();
 	};
 
 }
