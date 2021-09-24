@@ -3,7 +3,7 @@
 namespace algorithms
 {
 
-	Huffman::Huffman()
+	Huffman::Huffman() // Конструктор по умолчанию
 	{
 		_root = _iterator = nullptr;
 		_all_symbols = _various_symbols = _write_symbols = 0;
@@ -12,7 +12,7 @@ namespace algorithms
 		_letter = '\0';
 	}
 
-	Huffman::~Huffman()
+	Huffman::~Huffman() // Деструктор по умолчанию
 	{
 		_frequency.clear();
 		_summary_table.clear();
@@ -20,21 +20,21 @@ namespace algorithms
 		_way.clear();
 	}
 
-	Huffman::unit::unit()
+	Huffman::unit::unit() // Конструктор для узлов по умолчанию
 	{
 		_symbol_frequency = 0;
 		_symbol = '\0';
 		_left = _right = nullptr;
 	}
 
-	Huffman::unit::unit(char symbol, uint32_t symbol_frequency)
+	Huffman::unit::unit(char symbol, uint32_t symbol_frequency) // Конструктор копирования для узла
 	{
 		_symbol_frequency = symbol_frequency;
 		_symbol = symbol;
 		_left = _right = nullptr;
 	}
 
-	Huffman::unit::unit(unit* left, unit* right)
+	Huffman::unit::unit(unit* left, unit* right) // Конструктор, соединяющий два узла в мини-дерево
 	{
 		_left = left;
 		_right = right;
@@ -42,26 +42,26 @@ namespace algorithms
 		_symbol = '\0';
 	}
 
-	Huffman::unit::~unit()
+	Huffman::unit::~unit() // Деструктор узла по умолчанию
 	{
 		delete _left;
 		delete _right;
 	}
 
-	void Huffman::encode(std::string& in_file, std::string& out_file)
+	void Huffman::encode(std::string& in_file, std::string& out_file) // Сжатие
 	{
-		encodeOpenStreamRead(in_file);
-		makeTable();
-		saveKey();
-		encodeOpenStreamWrite(in_file, out_file);
-		cleanAll();
+		encodeOpenStreamRead(in_file); // Чтение символов файла
+		makeTable(); // Составление таблицы шифрования
+		saveKey(); // Сохранение таблицы шифрования
+		encodeOpenStreamWrite(in_file, out_file); // Шифрование текста и запись его в новый файл
+		cleanAll(); // Отчистка полей
 	}
 
-	void Huffman::decode(std::string& in_file, std::string& out_file, std::string& key_file)
+	void Huffman::decode(std::string& in_file, std::string& out_file, std::string& key_file) // Расшифровка
 	{
-		decodeOpenStreamRead(in_file, key_file);
-		decodeFile(in_file, out_file);
-		cleanAll();
+		decodeOpenStreamRead(in_file, key_file); // Чтение сжатого файла и ключа
+		decodeFile(in_file, out_file); // Запись расшифрованного текст в новый файл
+		cleanAll(); // Отчистка полей
 	}
 
 	void Huffman::encodeOpenStreamRead(std::string& in_file)
