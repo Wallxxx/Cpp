@@ -3,7 +3,7 @@
 namespace algorithms
 {
 
-	Huffman::Huffman() // Конструктор по умолчанию
+	Huffman::Huffman() // РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
 	{
 		_root = _iterator = nullptr;
 		_all_symbols = _various_symbols = _write_symbols = 0;
@@ -12,7 +12,7 @@ namespace algorithms
 		_letter = '\0';
 	}
 
-	Huffman::~Huffman() // Деструктор по умолчанию
+	Huffman::~Huffman() // Р”РµСЃС‚СЂСѓРєС‚РѕСЂ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
 	{
 		_frequency.clear();
 		_summary_table.clear();
@@ -20,21 +20,21 @@ namespace algorithms
 		_way.clear();
 	}
 
-	Huffman::unit::unit() // Конструктор для узлов по умолчанию
+	Huffman::unit::unit() // РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РґР»СЏ СѓР·Р»РѕРІ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
 	{
 		_symbol_frequency = 0;
 		_symbol = '\0';
 		_left = _right = nullptr;
 	}
 
-	Huffman::unit::unit(char symbol, uint32_t symbol_frequency) // Конструктор копирования для узла
+	Huffman::unit::unit(char symbol, uint32_t symbol_frequency) // РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РєРѕРїРёСЂРѕРІР°РЅРёСЏ РґР»СЏ СѓР·Р»Р°
 	{
 		_symbol_frequency = symbol_frequency;
 		_symbol = symbol;
 		_left = _right = nullptr;
 	}
 
-	Huffman::unit::unit(unit* left, unit* right) // Конструктор, соединяющий два узла в мини-дерево
+	Huffman::unit::unit(unit* left, unit* right) // РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ, СЃРѕРµРґРёРЅСЏСЋС‰РёР№ РґРІР° СѓР·Р»Р° РІ РјРёРЅРё-РґРµСЂРµРІРѕ
 	{
 		_left = left;
 		_right = right;
@@ -42,26 +42,26 @@ namespace algorithms
 		_symbol = '\0';
 	}
 
-	Huffman::unit::~unit() // Деструктор узла по умолчанию
+	Huffman::unit::~unit() // Р”РµСЃС‚СЂСѓРєС‚РѕСЂ СѓР·Р»Р° РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
 	{
 		delete _left;
 		delete _right;
 	}
 
-	void Huffman::encode(std::string& in_file, std::string& out_file) // Сжатие
+	void Huffman::encode(std::string& in_file, std::string& out_file) // РЎР¶Р°С‚РёРµ
 	{
-		encodeOpenStreamRead(in_file); // Чтение символов файла
-		makeTable(); // Составление таблицы шифрования
-		saveKey(); // Сохранение таблицы шифрования
-		encodeOpenStreamWrite(in_file, out_file); // Шифрование текста и запись его в новый файл
-		cleanAll(); // Отчистка полей
+		encodeOpenStreamRead(in_file); // Р§С‚РµРЅРёРµ СЃРёРјРІРѕР»РѕРІ С„Р°Р№Р»Р°
+		makeTable(); // РЎРѕСЃС‚Р°РІР»РµРЅРёРµ С‚Р°Р±Р»РёС†С‹ С€РёС„СЂРѕРІР°РЅРёСЏ
+		saveKey(); // РЎРѕС…СЂР°РЅРµРЅРёРµ С‚Р°Р±Р»РёС†С‹ С€РёС„СЂРѕРІР°РЅРёСЏ
+		encodeOpenStreamWrite(in_file, out_file); // РЁРёС„СЂРѕРІР°РЅРёРµ С‚РµРєСЃС‚Р° Рё Р·Р°РїРёСЃСЊ РµРіРѕ РІ РЅРѕРІС‹Р№ С„Р°Р№Р»
+		cleanAll(); // РћС‚С‡РёСЃС‚РєР° РїРѕР»РµР№
 	}
 
-	void Huffman::decode(std::string& in_file, std::string& out_file, std::string& key_file) // Расшифровка
+	void Huffman::decode(std::string& in_file, std::string& out_file, std::string& key_file) // Р Р°СЃС€РёС„СЂРѕРІРєР°
 	{
-		decodeOpenStreamRead(in_file, key_file); // Чтение сжатого файла и ключа
-		decodeFile(in_file, out_file); // Запись расшифрованного текст в новый файл
-		cleanAll(); // Отчистка полей
+		decodeOpenStreamRead(in_file, key_file); // Р§С‚РµРЅРёРµ СЃР¶Р°С‚РѕРіРѕ С„Р°Р№Р»Р° Рё РєР»СЋС‡Р°
+		decodeFile(in_file, out_file); // Р—Р°РїРёСЃСЊ СЂР°СЃС€РёС„СЂРѕРІР°РЅРЅРѕРіРѕ С‚РµРєСЃС‚ РІ РЅРѕРІС‹Р№ С„Р°Р№Р»
+		cleanAll(); // РћС‚С‡РёСЃС‚РєР° РїРѕР»РµР№
 	}
 
 	void Huffman::encodeOpenStreamRead(std::string& in_file)
