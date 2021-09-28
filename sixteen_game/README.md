@@ -12,9 +12,11 @@
 
 ### Сборка и запуск (Windows)
 
-Способ 1: Запустить код через **Visual Studio**
+Способ 1:  
+Запустить код через **Visual Studio**
+
 
 Способ 2:  
-Запустить **Developer Command Prompt**
-Перейти в папку с кодом и прописать: ```cl /EHsc githubUpdate.cpp Data.cpp```
+Запустить **Developer Command Prompt**  
+Перейти в папку с кодом и прописать: ```cl /EHsc githubUpdate.cpp Data.cpp```  
 Запуск: ```githubUpdate```
