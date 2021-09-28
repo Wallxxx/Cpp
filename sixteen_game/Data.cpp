@@ -1,29 +1,29 @@
-#include "data.h"
+#include "Data.h"
 
-Data::~Data()
+Data::~Data() // Деструктор по умолчанию
 {
     for (unsigned int i = 0; i < 4; i++)
     {
-        delete[] map[i];
+        delete[] map[i]; // Удаление каждой ячейки карты
     }
-    delete map;
+    delete map; // Удаление карты
 }
 
-bool Data::createMap()
+bool Data::createMap() // Создание карты
 {
-    map = new cell*[4];
-    for (unsigned int i = 0; i < 4; ++i)
+    map = new cell * [4];
+    for (unsigned int i = 0; i < 4; ++i) // Выделение памяти под двумерный массив
     {
-        map[i] = new cell[4];
+        map[i] = new cell[4]; 
     }
     return true;
 }
 
-bool Data::setMap()
+bool Data::setMap() // Заполнение карты
 {
     unsigned int number = 1;
     int post = 0;
-    for (unsigned int i = 0; i < 4; ++i)
+    for (unsigned int i = 0; i < 4; ++i) // Карта заполняется числами по порядку от 1 до 16
     {
         for (unsigned int q = 0; q < 4; ++q)
         {
@@ -31,8 +31,8 @@ bool Data::setMap()
             number++;
         }
     }
-    map[4 - 1][4 - 1]._here = true;
-    for (int i = 0; i < 120; i++)
+    map[4 - 1][4 - 1]._here = true; // В нижний правый угол ставится звёздочка вместо число 16
+    for (int i = 0; i < 120; i++) // Далее 120 случайных ходов в случайную сторону
     {
         post = rand() % 4 + 1;
         switch (post)
@@ -54,22 +54,22 @@ bool Data::setMap()
     return true;
 }
 
-bool Data::moveUp()
+bool Data::moveUp() // Движение вверх
 {
     for (unsigned int i = 0; i < 4; ++i)
     {
         for (unsigned int q = 0; q < 4; ++q)
         {
-            if (map[i][q]._here)
+            if (map[i][q]._here) // Поиск клетки со звёздочкой
             {
-                if (i != 0)
-                {
-                    map[i][q]._here = false;
-                    map[i - 1][q]._here = true;
-                    std::swap(map[i][q]._number, map[i - 1][q]._number);
-                    return true;
+                if (i != 0) // Если есть, куда идти выше...
+                { // ...перемещение выше
+                    map[i][q]._here = false; // Убирается звёздочка с нынешней клетки
+                    map[i - 1][q]._here = true; // Ставится в клетку выше
+                    std::swap(map[i][q]._number, map[i - 1][q]._number); // Числа этих ячеек меняются местами
+                    return true; // Перемещение пошло успешно
                 }
-                else
+                else // Иначе передвижение не удалось
                 {
                     return false;
                 }
@@ -79,7 +79,7 @@ bool Data::moveUp()
     return false;
 }
 
-bool Data::moveDown()
+bool Data::moveDown() // Передвижение вниз. Аналогично moveUp()
 {
     for (unsigned int i = 0; i < 4; ++i)
     {
@@ -104,7 +104,7 @@ bool Data::moveDown()
     return false;
 }
 
-bool Data::moveLeft()
+bool Data::moveLeft() // Передвижение влево. Аналогично moveUp()
 {
     for (unsigned int i = 0; i < 4; ++i)
     {
@@ -129,7 +129,7 @@ bool Data::moveLeft()
     return false;
 }
 
-bool Data::moveRight()
+bool Data::moveRight() // Передвижение вправо. Аналогично moveUp()
 {
     for (unsigned int i = 0; i < 4; ++i)
     {
@@ -154,68 +154,42 @@ bool Data::moveRight()
     return false;
 }
 
-bool Data::win()
+bool Data::win() // Проверка условия победы
 {
     unsigned int number = 1;
     for (unsigned int i = 0; i < 4; ++i)
     {
-        for (unsigned int q = 0; q < 4; ++q)
+        for (unsigned int q = 0; q < 4; ++q) // Проход по всем клеткам карты
         {
-            if (map[i][q]._number != number)
+            if (map[i][q]._number != number) // Если числа расставлены по порядку...
             {
                 return false;
             }
             number++;
         }
     }
-    if (map[4 - 1][4 - 1]._here)
+    if (map[4 - 1][4 - 1]._here) // ...и звёздочка в конце...
     {
-        return true;
+        return true; // ...победа
     }
-    return false;
+    return false; // Иначе продолжение игры
 }
 
-void Data::printMap()
+void Data::printMap() // Печать карты
 {
     for (unsigned int i = 0; i < 4; ++i)
     {
-        for (unsigned int q = 0; q < 4; ++q)
+        for (unsigned int q = 0; q < 4; ++q) // Проход по всем клеткам карты
         {
-            if (!map[i][q]._here)
+            if (!map[i][q]._here) // Печать всех чисел, однако...
             {
                 std::cout << map[i][q]._number << "\t";
             }
-            else
+            else // ...клетка со звёздочкой печатается в виде звёздочки
             {
                 std::cout << "*\t";
             }
         }
         std::cout << std::endl;
-    }
-}
-
-void Data::setInputMode(bool status)
-{
-    if (status)
-    {
-        /*tcgetattr gets the parameters of the current terminal
-        STDIN_FILENO will tell tcgetattr that it should write the settings
-        of stdin to oldt*/
-        tcgetattr( STDIN_FILENO, &oldt);
-        /*now the settings will be copied*/
-        newt = oldt;
-
-        /*ICANON normally takes care that one line at a time will be processed
-        that means it will return if it sees a "\n" or an EOF or an EOL*/
-        newt.c_lflag &= ~(ICANON);
-
-        /*Those new settings will be set to STDIN
-        TCSANOW tells tcsetattr to change attributes immediately. */
-        tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-    }
-    else
-    {
-        /*restore the old settings*/
-        tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
     }
 }
